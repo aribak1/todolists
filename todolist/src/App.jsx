@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import Todoform from "./components/Todoform";
 import supabase from "./Superbaseclient.js";
 import Todolist from "./components/Todolist.jsx";
+import Todofilter from "./components/Todofilter.jsx";
 
 const App = () => {
   const [todos, settodos] = useState([]);
+  const [filter, setfilter] = useState("showall");
 
   async function addTodo(task) {
     const { error } = await supabase.from("todo").insert([{ task }]);
@@ -49,10 +51,25 @@ const App = () => {
     }
   }
 
+  const filtertodos = todos.filter((todo) => {
+    if (filter === "incomplete") {
+      return !todo.done; //whatever the state false will show in front end
+    }
+    if (filter === "completed") {
+      return todo.done;
+    }
+    return true;
+  });
+
   return (
     <div>
       <Todoform addTodo={addTodo} />
-      <Todolist todos={todos} deletodo={deletetodo} toggledone={toggledone} />
+      <Todofilter filters={filter} setfilters={setfilter} />
+      <Todolist
+        todos={filtertodos}
+        deletodo={deletetodo}
+        toggledone={toggledone}
+      />
     </div>
   );
 };
