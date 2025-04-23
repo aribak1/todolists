@@ -27,10 +27,32 @@ const App = () => {
       settodos(data);
     }
   }
+  async function deletetodo(id) {
+    const { error } = await supabase.from("todo").delete().eq("id", id);
+    if (error) {
+      alert(error.message);
+      return;
+    } else {
+      fetchtask();
+    }
+  }
+  async function toggledone(id, done) {
+    const { error } = await supabase
+      .from("todo")
+      .update({ done: !done })
+      .eq("id", id);
+    if (error) {
+      alert(error.message);
+      return;
+    } else {
+      fetchtask(); //refresh method eveything remain updated and refresh by it self
+    }
+  }
+
   return (
     <div>
       <Todoform addTodo={addTodo} />
-      <Todolist todos={todos} />
+      <Todolist todos={todos} deletodo={deletetodo} toggledone={toggledone} />
     </div>
   );
 };
